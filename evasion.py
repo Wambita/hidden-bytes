@@ -67,3 +67,4 @@ with tempfile.NamedTemporaryFile(delete=False, suffix=".exe") as tmp:
     tmp_path = tmp.name
     
 subprocess.run([tmp_path], check=False)
+os.unlink(tmp_path)
