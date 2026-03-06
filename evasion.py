@@ -68,3 +68,11 @@ with tempfile.NamedTemporaryFile(delete=False, suffix=".exe") as tmp:
     
 subprocess.run([tmp_path], check=False)
 os.unlink(tmp_path)
+
+def encrypt_binary(target_path, output_path, size_mb, delay):
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--encrypt")
+    parser.add_argument("--output")
+    parser.add_argument("--add-size")
+    parser.add_argument("--delay")
+    
