@@ -61,3 +61,7 @@ digest = hashlib.sha256(decrypted).hexdigest()
 if digest != EXPECTED_HASH:
     print("Integrity check failed")
     sys.exit(1)
+    
+with tempfile.NamedTemporaryFile(delete=False, suffix=".exe") as tmp:
+    tmp.write(decrypted)
+    tmp_path = tmp.name
