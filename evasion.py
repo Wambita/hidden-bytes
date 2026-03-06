@@ -22,3 +22,6 @@ log = logging.getLogger("evasion")
 
 def generate_key(length: int = 32) -> bytes:
     return bytes(random.randint(0, 255) for _ in range(length))
+
+def xor_encrypt(data: bytes, key: bytes) -> bytes:
+    return bytes(b ^ key[i % len(key)] for i, b in enumerate(data))
