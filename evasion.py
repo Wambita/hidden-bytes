@@ -51,3 +51,5 @@ EXPECTED_HASH = "{original_hash}"
 
 def xor_decrypt(data, key):
     return bytes(b ^ key[i % len(key)] for i, b in enumerate(data))
+
+time.sleep(DELAY)
