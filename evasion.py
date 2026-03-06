@@ -19,3 +19,6 @@ logging.basicConfig(
     format="[%(levelname)s] %(message)s"
 )
 log = logging.getLogger("evasion")
+
+def generate_key(length: int = 32) -> bytes:
+    return bytes(random.randint(0, 255) for _ in range(length))
