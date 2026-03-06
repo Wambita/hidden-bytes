@@ -76,3 +76,13 @@ def encrypt_binary(target_path, output_path, size_mb, delay):
     parser.add_argument("--add-size")
     parser.add_argument("--delay")
     
+def main():
+    parser = build_parser()
+    args = parser.parse_args()
+
+    encrypt_binary(
+        target_path=args.encrypt,
+        output_path=args.output,
+        size_mb=args.add_size,
+        delay=args.delay
+    )
