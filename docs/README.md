@@ -1,4 +1,4 @@
-# HiddenBytes — Binary Evasion & Polymorphism Toolkit
+# HiddenBytes - Binary Evasion & Polymorphism Toolkit
 
 > **DISCLAIMER:** This project is strictly for educational purposes in an authorized, isolated lab environment. Unauthorized use of these techniques is illegal and unethical. All testing must be performed in your own controlled VM.
 
@@ -52,8 +52,6 @@ hiddenbytes/
 │   ├── README.md           # This file
 │   ├── PLANNING.md         # Project planning & decision log
 │   └── CASE_STUDY.md       # Technical case study
-└── tests/
-    └── test_core.py        # Unit tests
 ```
 
 ---
